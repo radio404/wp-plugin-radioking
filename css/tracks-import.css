@@ -1,0 +1,14 @@
+.tracks-import-progress{
+    width:100%;
+    display: block;
+}
+.tracks-import-list .track img{
+    height:30px;
+    width:30px;
+}
+.tracks-import-list .track .album {
+    font-style: italic;
+}
+.tracks-import-list .track .artist {
+    font-weight: bold;
+}
