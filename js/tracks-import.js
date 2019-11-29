@@ -29,7 +29,7 @@ jQuery(document).ready(function($){
                     radioking_access_token: radioking_access_token,
                     idtrackbox: idtrackbox,
                     offset: offset,
-                    limit: 30,
+                    limit: 10,
                 }
             }).done(function (tracks) {
                 total_done += tracks.length;
@@ -41,6 +41,7 @@ jQuery(document).ready(function($){
                 tracks.forEach(function(t){
                     output+=
                         '<div class="track">' +
+                        '<small><code class="wp_track">'+t.wp_track.ID+'</code></small> ' +
                         '<span class="title">'+t.track.title+'</span> ' +
                         '<span class="album">'+t.track.album+'</span> ' +
                         '<span class="artist">'+t.track.artist+'</span>' +

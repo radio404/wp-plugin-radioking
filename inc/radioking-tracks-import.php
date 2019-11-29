@@ -1,37 +1,5 @@
 <?php
 
-function radioking_get_token(){
-
-	$user_id = get_current_user_id();
-	$api_oauth_endpoint = get_field('radioking_api_manager_endpoint','option');
-	$rk_user_id = get_field("radioking_user_id","user_$user_id");
-	$rk_password = get_field("radioking_password","user_$user_id");
-	$response = Requests::post($api_oauth_endpoint, [], json_encode( [
-		'login'    => $rk_user_id,
-		'password' => $rk_password,
-	] ) );
-
-	if($response->body){
-		$data         = json_decode( $response->body );
-		if($data && $data->access_token){
-			$access_token = $data->access_token;
-			return $access_token;
-		}else{
-			return false;
-		}
-	}else{
-		return false;
-	}
-
-}
-
-function radioking_get_track_box($access_token=''){
-	$access_token = $access_token ?? radioking_get_token();
-	$api_headers = [ "authorization"=> "Bearer $access_token"];
-	$response = Requests::get("https://www.radioking.com/api/track/box/240028",$api_headers);
-	return json_decode($response->body)->data;
-}
-
 function ignore_amp_filter($value){
 	return str_replace('&amp;','&',$value);
 }
@@ -70,7 +38,7 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 
 		$wp_album = get_album_by_title_and_artist($track->album,$track->artist);
 		$wp_track = get_track_by_id($track->idtrack);
-		$wp_cover = get_cover_by_album($wp_album->ID, $track->cover);
+		$wp_cover = get_cover_by_album($track->album, $track->artist, $track->cover);
 
 		if(intval($wp_track->post_author) <= 1) {
 			// détails des tags
@@ -115,7 +83,7 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 		}
 
 		$wp_album_meta = [
-			'artist' => $track->artist,
+			'artist_literal' => $track->artist,
 			'artist_list' => $artist_list,
 			'release_year' => $track->year,
 		];
@@ -129,11 +97,12 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 				'post_name' => sanitize_title("$track->artist __ $track->album"),
 				'post_date' => $post_date,
 				'post_date_gmt' => $post_date,
-				'meta_input' => $wp_album_meta,
+				//'meta_input' => $wp_album_meta,
 			]);
 			$wp_album = get_post($wp_album_id);
-			update_field('artist_list', $artist_list, $wp_album->ID);
-
+			foreach ($wp_album_meta as $field_key => $field_value){
+				update_field($field_key, $field_value, $wp_album->ID);
+			}
 		}
 
 		$wp_track_meta = [
@@ -146,8 +115,9 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 			'playtime_seconds' => $track->playtime_seconds,
 			'playtime_string' => $track->playtime_string,
 			'artist_list' => $artist_list,
-			'artist' => $track->artist,
+			'artist_literal' => $track->artist,
 			'album' => $wp_album->ID,
+			'album_literal' => $track->album,
 		];
 		if(!$wp_track){
 			$wp_track_id = wp_insert_post([
@@ -158,10 +128,12 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 				'post_name' => sanitize_title("$track->artist __ $track->album  __ $track->title"),
 				'post_date' => $post_date,
 				'post_date_gmt' => $post_date,
-				'meta_input' => $wp_track_meta
+				//'meta_input' => $wp_track_meta
 			]);
 			$wp_track = get_post($wp_track_id);
-			update_field('artist_list', $artist_list, $wp_track->ID);
+			foreach ($wp_track_meta as $field_key => $field_value){
+				update_field($field_key, $field_value, $wp_track->ID);
+			}
 
 		}
 
@@ -188,7 +160,9 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 		set_post_thumbnail($wp_track->ID,$wp_cover->ID);
 
 		$tracks_imported[] = [
+			'download'=> !!$wp_cover_id,
 			'track'=>$track,
+			'wp_track'=>$wp_track,
 			'cover_url'=>get_the_post_thumbnail_url($wp_track->ID,'thumbnail')
 		];
 

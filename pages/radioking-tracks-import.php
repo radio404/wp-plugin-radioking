@@ -19,7 +19,7 @@ foreach ($queries as $query){
     }
 }
 
-//* /
+/* /
 $args = array('post_type'=>'attachment','nopaging'=>true,'post_status'=>'any');
 $query = new WP_Query($args);
 if($query->posts){
@@ -34,11 +34,13 @@ if($query->posts){
 ?><div class="wrap">
 	<h1><?= $import_page_title ?></h1>
 
-    <pre>
-        <?php
+    <pre><?php
 
-        ?>
-    </pre>
+        //$cover = get_cover_by_album('Mood Swings','Stig Of The Dump','d21b24f2-fc71-497a-9be6-61ed0f0205b1');
+
+        //var_dump($cover);
+
+        ?></pre>
 
     <select name="track-boxes" id="track-boxes" class="track-boxes-select">
 
