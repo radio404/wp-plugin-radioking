@@ -17,5 +17,7 @@ require 'inc/radioking-core.php';
 require 'inc/radioking-tracks-import.php';
 require 'inc/radioking-like.php';
 
+require 'inc/radioking-activation.php';
+
 require 'api/radioking-tracks-import.php';
 require 'api/radioking-like.php';

@@ -1,11 +1,15 @@
 <?php
 
 $import_page_title = __( 'Syncronisation des pistes RadioKing', 'radio404' );
-$access_token = radioking_get_token();
+try {
+	$access_token      = radioking_get_token();
+	$track_boxes = radioking_get_track_box( $access_token );
+	$count       = $track_boxes[0]->count;
 
-$track_boxes = radioking_get_track_box($access_token);
-$count = $track_boxes[0]->count;
-
+}catch (Exception $err){
+	$track_boxes =[];
+    $count = 0;
+}
 /*/
 $queries = ["DELETE FROM wp_posts WHERE post_type in('album','artist','track')",
 'DELETE FROM wp_postmeta WHERE post_id NOT IN (SELECT id FROM wp_posts)',
@@ -35,6 +39,8 @@ if($query->posts){
 	<h1><?= $import_page_title ?></h1>
 
     <pre><?php
+
+        if(isset($err)) echo $err->getMessage();
 
         //$cover = get_cover_by_album('Mood Swings','Stig Of The Dump','d21b24f2-fc71-497a-9be6-61ed0f0205b1');
 

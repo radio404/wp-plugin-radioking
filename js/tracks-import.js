@@ -29,7 +29,7 @@ jQuery(document).ready(function($){
                     radioking_access_token: radioking_access_token,
                     idtrackbox: idtrackbox,
                     offset: offset,
-                    limit: 10,
+                    limit: 15,
                 }
             }).done(function (tracks) {
                 total_done += tracks.length;
@@ -55,6 +55,9 @@ jQuery(document).ready(function($){
                 }else{
                     buttonStartTracksImport.attr('disabled',false);
                 }
+            }).fail(function(err){
+                trackImportList.prepend('<div><code>Erreur : </code> '+err.message+'</div>');
+                TrackImport(total_done);
             });
         }
         TrackImport(0);

@@ -32,13 +32,21 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 
 	foreach ($tracks as $track){
 
+		$wp_track = get_track_by_id($track->idtrack);
+		if($wp_track->ID){
+			$tracks_imported[] = [
+				'wp_track'=>$wp_track,
+				'track'=>$track
+			];
+			continue;
+		}
+
+		$wp_album = get_album_by_title_and_artist($track->album,$track->artist);
+		$wp_cover = get_cover_by_album($track->album, $track->artist, $track->cover);
+
 		$id_author = 0;
 		$upload_date = new DateTime($track->upload_date);
 		$post_date = $upload_date->format("Y-m-d H:i:s");
-
-		$wp_album = get_album_by_title_and_artist($track->album,$track->artist);
-		$wp_track = get_track_by_id($track->idtrack);
-		$wp_cover = get_cover_by_album($track->album, $track->artist, $track->cover);
 
 		if(intval($wp_track->post_author) <= 1) {
 			// détails des tags
@@ -94,7 +102,7 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 				'post_type' => 'album',
 				'post_status' => 'publish',
 				'post_author'=> $id_author,
-				'post_name' => sanitize_title("$track->artist __ $track->album"),
+				'post_name' => sanitize_title("$track->artist--$track->album"),
 				'post_date' => $post_date,
 				'post_date_gmt' => $post_date,
 				//'meta_input' => $wp_album_meta,
@@ -125,7 +133,7 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 				'post_type' => 'track',
 				'post_status' => 'publish',
 				'post_author'=> $id_author,
-				'post_name' => sanitize_title("$track->artist __ $track->album  __ $track->title"),
+				'post_name' => sanitize_title("$track->album--$track->title"),
 				'post_date' => $post_date,
 				'post_date_gmt' => $post_date,
 				//'meta_input' => $wp_track_meta

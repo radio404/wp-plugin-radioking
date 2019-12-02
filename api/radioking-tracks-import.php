@@ -18,7 +18,11 @@ function radioking_tracks_import_api_callback() {
 		wp_die('sorry you are not allowed to access this data','cheatin eh?',403);
 	}
 
-	$tracks_imported = radioking_tracks_import($offset,$limit,$idtrackbox,$radioking_access_token);
+	try {
+		$tracks_imported = radioking_tracks_import( $offset, $limit, $idtrackbox, $radioking_access_token );
+	}catch (Throwable $exception){
+		return new WP_REST_Response(['message'=>$exception->getMessage()], 500);
+	}
 
 	return rest_ensure_response( $tracks_imported );
 }
