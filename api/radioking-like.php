@@ -20,7 +20,7 @@ function radioking_like_api_callback($request_data) {
 			}
 		}
 	}catch (Throwable $err){
-		$payload = $err->getMessage();
+		$success['error'] = $err->getMessage();
 	}
 
 	return rest_ensure_response( $success );

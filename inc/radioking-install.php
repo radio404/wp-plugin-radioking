@@ -11,7 +11,7 @@ function radioking_create_db() {
  rk_track_id int unsigned NOT NULL,
  wp_track_id int unsigned NOT NULL,
  like_offset tinyint(2) NOT NULL,
- like_emoji varchar(8) NOT NULL,
+ like_emoji varchar(4) NOT NULL,
  date datetime DEFAULT CURRENT_TIMESTAMP,
  PRIMARY KEY  (id_track_like)
  );";

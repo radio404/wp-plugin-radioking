@@ -9,11 +9,11 @@ function like_track($payload){
 	$vote = intval($payload->vote) <= 0 ? -1 : 1;
 	$is_current_track = $current && $current->id == $payload->id;
 	$is_radio_king_like = $is_current_track && radioking_like_track($vote);
-	$is_wp_like = wp_like_track($vote,$current->emoji,$payload->id,$payload->wp_track_id);
+	$is_wp_like = wp_like_track($vote,$payload->emoji,$payload->id,$payload->wp_track_id);
 	return [
 		'is_current_track'=>$is_current_track,
 		'is_radio_king_like'=>$is_radio_king_like,
-		'is_wp_like'=>$is_wp_like,
+		'is_wp_like'=>!!$is_wp_like,
 		'vote'=>$vote,
 	];
 }
@@ -26,11 +26,11 @@ function wp_like_track(int $vote, $emoji='❤️', $rk_track_id = 0, $wp_track_i
 	if(!$rk_track_id && !!$wp_track_id){
 		$rk_track_id = intval(get_post_meta($wp_track_id,'idtrack'));
 	}
-	$success = $wpdb::insert($wpdb->prefix.'track_like',[
+	$success = $wpdb->insert($wpdb->prefix.'track_like',[
 		'rk_track_id'=>$rk_track_id,
 		'wp_track_id'=>$wp_track_id,
 		'like_offset'=>$vote,
-		'like_emoji'=>$emoji
+		'like_emoji'=>$emoji,
 	]);
 
 	return $success;
