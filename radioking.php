@@ -13,6 +13,7 @@ License: GPLv2 or later
 Text Domain: radio404
 */
 
+require 'inc/radioking-install.php';
 require 'inc/radioking-core.php';
 require 'inc/radioking-tracks-import.php';
 require 'inc/radioking-like.php';
