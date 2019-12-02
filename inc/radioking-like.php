@@ -6,14 +6,34 @@ function like_track($payload){
 	if($response->body){
 		$current = json_decode($response->body);
 	}
+	$vote = intval($payload->vote) <= 0 ? -1 : 1;
 	$is_current_track = $current && $current->id == $payload->id;
-	$is_radio_king_like = $is_current_track && radioking_like_track($payload);
-	$wp_track = get_track_by_id($payload->id);
+	$is_radio_king_like = $is_current_track && radioking_like_track($vote);
+	$is_wp_like = wp_like_track($vote,$current->emoji,$payload->id,$payload->wp_track_id);
 	return [
 		'is_current_track'=>$is_current_track,
 		'is_radio_king_like'=>$is_radio_king_like,
-		'wp_track'=>$wp_track,
+		'is_wp_like'=>$is_wp_like,
+		'vote'=>$vote,
 	];
+}
+
+function wp_like_track(int $vote, $emoji='❤️', $rk_track_id = 0, $wp_track_id = 0){
+	global $wpdb;
+	if(!$wp_track_id){
+		$wp_track_id = get_track_by_id($rk_track_id);
+	}
+	if(!$rk_track_id && !!$wp_track_id){
+		$rk_track_id = intval(get_post_meta($wp_track_id,'idtrack'));
+	}
+	$success = $wpdb::insert($wpdb->prefix.'track_like',[
+		'rk_track_id'=>$rk_track_id,
+		'wp_track_id'=>$wp_track_id,
+		'like_offset'=>$vote,
+		'like_emoji'=>$emoji
+	]);
+
+	return $success;
 }
 
 function radioking_like_track($vote=1, $with_proxy=false, $try_count=0, $max_try=8){
