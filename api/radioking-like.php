@@ -13,7 +13,6 @@ function radioking_like_api_callback($request_data) {
 	$success = ['success'=>false];
 	try {
 		$payload       = json_decode( $request_data->get_body() );
-		$like_response = [];
 		if ( $payload ) {
 			if ( $payload->id ) {
 				$success = like_track($payload);

@@ -11,6 +11,7 @@ function like_track($payload){
 	$is_radio_king_like = $is_current_track && radioking_like_track($vote);
 	$is_wp_like = wp_like_track($vote,$payload->emoji,$payload->id,$payload->wp_track_id);
 	return [
+		'success'=> true,
 		'is_current_track'=>$is_current_track,
 		'is_radio_king_like'=>$is_radio_king_like,
 		'is_wp_like'=>!!$is_wp_like,
@@ -23,6 +24,14 @@ function wp_like_track(int $vote, $emoji='❤️', $rk_track_id = 0, $wp_track_i
 	if(!$wp_track_id){
 		$wp_track_id = get_track_by_id($rk_track_id);
 	}
+	// emoji regexp
+	$unicodeRegexp = '([*#0-9](?>\\xEF\\xB8\\x8F)?\\xE2\\x83\\xA3|\\xC2[\\xA9\\xAE]|\\xE2..(\\xF0\\x9F\\x8F[\\xBB-\\xBF])?(?>\\xEF\\xB8\\x8F)?|\\xE3(?>\\x80[\\xB0\\xBD]|\\x8A[\\x97\\x99])(?>\\xEF\\xB8\\x8F)?|\\xF0\\x9F(?>[\\x80-\\x86].(?>\\xEF\\xB8\\x8F)?|\\x87.\\xF0\\x9F\\x87.|..(\\xF0\\x9F\\x8F[\\xBB-\\xBF])?|(((?<zwj>\\xE2\\x80\\x8D)\\xE2\\x9D\\xA4\\xEF\\xB8\\x8F\k<zwj>\\xF0\\x9F..(\k<zwj>\\xF0\\x9F\\x91.)?|(\\xE2\\x80\\x8D\\xF0\\x9F\\x91.){2,3}))?))';
+	preg_match( $unicodeRegexp, $emoji, $matches_emo );
+	if(count($matches_emo) !== 1){
+		// ignore non-emoji chars
+		$emoji='❤️';
+	}
+
 	if(!$rk_track_id && !!$wp_track_id){
 		$rk_track_id = intval(get_post_meta($wp_track_id,'idtrack'));
 	}
