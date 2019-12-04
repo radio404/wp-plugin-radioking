@@ -190,5 +190,5 @@ function radioking_menu() {
 	add_menu_page( __( 'Syncronisation des pistes RadioKing', 'radio404' ),
 		__( 'Import RadioKing', 'radio404' ), 'administrator',
 		'radioking-tracks-import', 'radioking_tracks_import_page',
-		'dashicons-download', 80 );
+		'dashicons-radioking', 80 );
 }
