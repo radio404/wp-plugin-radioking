@@ -4,8 +4,8 @@ function radioking_log_track($payload){
 	global $wpdb;
 
 	$rk_track_id = $payload->id;
-	$started_at = DateTime::createFromFormat($payload->started_at,DATE_ISO8601);
-	$end_at = DateTime::createFromFormat($payload->end_at,DATE_ISO8601);
+	$started_at = DateTime::createFromFormat(DATE_ISO8601, $payload->started_at);
+	$end_at = DateTime::createFromFormat(DATE_ISO8601,$payload->end_at);
 	$wp_track = get_track_by_id($rk_track_id);
 	$wp_track_id = $wp_track->ID ?? 0;
 	$success = $wpdb->insert($wpdb->prefix.'track_log',[
@@ -15,5 +15,5 @@ function radioking_log_track($payload){
 		'end_at'=>$end_at->format('Y-m-d H:i:s'),
 	]);
 
-	return ['success'=>!!$success];
+	return ['success'=>!!$success,'$payload'=>$payload,'$started_at'=>$started_at];
 }
