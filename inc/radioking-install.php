@@ -24,7 +24,9 @@ function radioking_create_db() {
 `id_track_log` INT NOT NULL AUTO_INCREMENT, 
 `rk_track_id` INT NOT NULL , 
 `wp_track_id` INT NOT NULL , 
-`date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+`started_at` DATETIME NOT NULL
+`ended_at` DATETIME NOT NULL
+`date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
 PRIMARY KEY (`wp_track_log_id`)) ENGINE = InnoDB;
  );";
 
