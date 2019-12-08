@@ -15,5 +15,5 @@ function radioking_log_track($payload){
 		'end_at'=>$end_at->format('Y-m-d H:i:s'),
 	]);
 
-	return ['success'=>!!$success,'wp_track_id'=>$wp_track_id];
+	return ['success'=>!!$success];
 }
