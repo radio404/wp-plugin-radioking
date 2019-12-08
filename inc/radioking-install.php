@@ -18,5 +18,17 @@ function radioking_create_db() {
 
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $sql );
+
+	$table_name = $wpdb->prefix . 'track_log';
+	$sql = "CREATE TABLE  IF NOT EXISTS `$table_name` ( 
+`id_track_log` INT NOT NULL AUTO_INCREMENT, 
+`rk_track_id` INT NOT NULL , 
+`wp_track_id` INT NOT NULL , 
+`date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+PRIMARY KEY (`wp_track_log_id`)) ENGINE = InnoDB;
+ );";
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	dbDelta( $sql );
 }
 
