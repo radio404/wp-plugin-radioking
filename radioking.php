@@ -15,6 +15,7 @@ Text Domain: radio404
 
 require 'inc/radioking-install.php';
 require 'inc/radioking-core.php';
+require 'inc/radioking-admin-pages.php';
 require 'inc/radioking-tracks-import.php';
 require 'inc/radioking-like.php';
 require 'inc/radioking-log.php';
