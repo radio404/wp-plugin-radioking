@@ -1,0 +1,24 @@
+.tracks-history__table{
+    width:100%;
+}
+.tracks-history__table .thumbnail{
+    width:25px;
+    height:25px;
+    display: block;
+}
+.tracks-history__table td{
+    min-height:1.5em;
+    line-height: 1.5em;
+}
+.tracks-history__table tr:nth-child(2n){
+    background: #fff;
+}
+.tracks-history__table td:nth-child(1){
+    width:80px;
+}
+.tracks-history__table td:nth-child(2){
+    width:25px;
+}
+.tracks-history__track-title{
+    width:auto;
+}

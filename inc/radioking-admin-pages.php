@@ -9,6 +9,8 @@ function radioking_tracks_import_page(){
 	include (__DIR__.'/../pages/radioking-tracks-import.php');
 }
 function radioking_tracks_history_page(){
+	global $wpdb;
+	wp_enqueue_style('radioking-tracks-history-style', plugins_url() . '/radioking/css/tracks-history.css');
 	include (__DIR__.'/../pages/radioking-tracks-history.php');
 }
 
