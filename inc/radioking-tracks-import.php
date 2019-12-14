@@ -33,16 +33,28 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 	foreach ($tracks as $track){
 
 		$wp_track = get_track_by_id($track->idtrack);
-		if($wp_track->ID){
+
+		/*if($wp_track->ID){
 			$tracks_imported[] = [
 				'wp_track'=>$wp_track,
 				'track'=>$track
 			];
 			continue;
+		}*/
+
+		switch($track->idtrackbox){
+			case 3:
+				$album_post_type = 'podcast';
+				$wp_album = get_podcast_by_title($track->album);
+				$wp_cover = get_cover_by_album(false, false, $track->cover);
+				break;
+			default:
+				$album_post_type = 'album';
+				$wp_album = get_album_by_title_and_artist($track->album,$track->artist);
+				$wp_cover = get_cover_by_album($track->album, $track->artist, $track->cover);
+				break;
 		}
 
-		$wp_album = get_album_by_title_and_artist($track->album,$track->artist);
-		$wp_cover = get_cover_by_album($track->album, $track->artist, $track->cover);
 
 		$id_author = 0;
 		$upload_date = new DateTime($track->upload_date);
@@ -99,7 +111,7 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 		if(!$wp_album){
 			$wp_album_id = wp_insert_post([
 				'post_title' => $track->album,
-				'post_type' => 'album',
+				'post_type' => $album_post_type,
 				'post_status' => 'publish',
 				'post_author'=> $id_author,
 				'post_name' => sanitize_title("$track->artist--$track->album"),
@@ -145,32 +157,48 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 
 		}
 
-		$wp_cover_meta = [
-			'is_cover' => true,
-			'idtrack' => $track->idtrack,
-			'id_album'   => $wp_album->ID,
-			'album'   => $track->album,
-			'artist_list' => $artist_list,
-			'artist' => $track->artist,
-			'cover' => $track->cover,
-		];
-		if(!$wp_cover){
-			$wp_cover_id = insert_attachment_from_url(
-				$track->cover_url,
-				$wp_album->ID,
-				$track->title,
-				$wp_cover_meta
-			);
-			$wp_cover = get_post($wp_cover_id);
+		// on ajoute la track à l'album/podcast
+		$track_listing = get_field('track_listing',$wp_album) ?? [];
+		$is_in_track_listing = false;
+		foreach($track_listing as $item){
+			$item_track = $item['track'];
+			$is_in_track_listing |= (!!$item_track && ($item_track->ID === $wp_track->ID));
+		};
+		if(!$is_in_track_listing){
+			update_field('track_listing',array_merge($track_listing,[['track'=>$wp_track->ID]]),$wp_album->ID);
 		}
 
-		set_post_thumbnail($wp_album->ID,$wp_cover->ID);
-		set_post_thumbnail($wp_track->ID,$wp_cover->ID);
+		if($track->cover_url) {
+			$wp_cover_meta = [
+				'is_cover'    => true,
+				'idtrack'     => $track->idtrack,
+				'id_album'    => $wp_album->ID,
+				'album'       => $track->album,
+				'artist_list' => $artist_list,
+				'artist'      => $track->artist,
+				'cover'       => $track->cover,
+			];
+			if ( ! $wp_cover ) {
+				$wp_cover_id = insert_attachment_from_url(
+					$track->cover_url,
+					$wp_album->ID,
+					$track->title,
+					$wp_cover_meta
+				);
+				$wp_cover    = get_post( $wp_cover_id );
+			}
+
+			set_post_thumbnail( $wp_album->ID, $wp_cover->ID );
+			set_post_thumbnail( $wp_track->ID, $wp_cover->ID );
+		}else{
+			$wp_cover_id = false;
+		}
 
 		$tracks_imported[] = [
 			'download'=> !!$wp_cover_id,
 			'track'=>$track,
 			'wp_track'=>$wp_track,
+			'track_listing'=>$track_listing,
 			'cover_url'=>get_the_post_thumbnail_url($wp_track->ID,'thumbnail')
 		];
 

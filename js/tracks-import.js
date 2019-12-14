@@ -3,22 +3,28 @@ jQuery(document).ready(function($){
     var progress = $('.tracks-import-progress');
     var trackImportList = $('.tracks-import-list');
     var trackBoxesSelect = $('.track-boxes-select');
+    var daysRestrictionSelect = $('.days-restriction');
+    var daysRestriction = -1;
     var idtrackbox = 1;
 
     buttonStartTracksImport.click(function(){
+        trackBoxesSelect.attr('disabled',true);
         buttonStartTracksImport.attr('disabled',true);
         StartTrackImport();
     })
 
     trackBoxesSelect.change(function(e){
         var id = trackBoxesSelect.find(':selected').val(),
-            trackbox = track_boxes.find(function(trackbox){
-           return trackbox.idtrackbox === id;
+            trackbox = track_boxes.find(function(t){
+                console.log(id,t);
+           return t.idtrackbox == id;
         });
         idtrackbox = trackbox.idtrackbox;
         $('.trackbox-count').text(trackbox.count);
         progress.text(trackbox.count);
+        progress.attr('max',trackbox.count);
     });
+
     function StartTrackImport(){
         var total_done = 0, total_todo = progress.attr('max'), startTime = Date.now();
         function TrackImport(offset) {
@@ -53,6 +59,7 @@ jQuery(document).ready(function($){
                     progress.attr('value',total_done);
                     TrackImport(total_done);
                 }else{
+                    trackBoxesSelect.attr('disabled',false);
                     buttonStartTracksImport.attr('disabled',false);
                 }
             }).fail(function(err){

@@ -67,6 +67,17 @@ if($query->posts){
 
     } ?>
     </select>
+
+    <select name="days-restriction" id="days-restriction" class="days-restriction">
+        <option value="-1">depuis toujours</option>
+        <option value="90">depuis 90 jours</option>
+        <option value="30">depuis 30 jours</option>
+        <option value="7">depuis une semaine</option>
+        <option value="3">depuis 3 jours</option>
+        <option value="1">depuis hier</option>
+        <option value="0">d'aujourd'hui</option>
+    </select>
+
     <button type="button" class="button button-primary start-tracks-import">Lancer la synchronisation des <span class="trackbox-count"><?= $count ?></span> morceaux</button>
     <span class="import-progress-label"></span>
     <script>
