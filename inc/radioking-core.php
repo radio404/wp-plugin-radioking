@@ -25,11 +25,37 @@ function radioking_get_token(){
 
 }
 
-function radioking_get_track_box($access_token=''){
+function radioking_get_track_box($access_token=null){
 	$access_token = $access_token ?? radioking_get_token();
 	$api_headers = [ "authorization"=> "Bearer $access_token"];
 	$response = Requests::get("https://www.radioking.com/api/track/box/240028",$api_headers);
 	return json_decode($response->body)->data;
+}
+
+function radioking_get_week_planned($access_token=null){
+	$access_token = $access_token ?? radioking_get_token();
+	$api_headers = [ "authorization"=> "Bearer $access_token"];
+	$response = Requests::get("https://www.radioking.com/api/radio/240028/schedule/planned/2019-12-07/to/2019-12-17",$api_headers);
+	$radioking_schedules = json_decode($response->body)->data;
+	foreach ($radioking_schedules as &$schedule){
+		if(preg_match('/^Day #\d/',$schedule->name)) continue;
+		if($schedule->idplaylist){
+			$response = Requests::get("https://www.radioking.com/api/playlist/tracks/240028/$schedule->idplaylist?limit=50&offset=0",$api_headers);
+			$schedule->playlist = json_decode($response->body)->data;
+			foreach ($schedule->playlist->tracks as &$track){
+				if($track->idtrackbox === 3){
+					$wp_track = get_track_by_id($track->idtrack);
+					$wp_track->acf = get_fields($wp_track->ID) ?? [];
+					$wp_podcast = get_post($wp_track->acf['album']);
+					$wp_podcast->acf = get_fields($wp_track->acf['album']);
+					$schedule->podcast_id = $wp_track->acf['album'];
+					$schedule->podcast = $wp_podcast;
+					$track->wp_track = $wp_track;
+				}
+			}
+		}
+	}
+	return $radioking_schedules;
 }
 
 function acf_map_meta_insert(array $source_fields):array {

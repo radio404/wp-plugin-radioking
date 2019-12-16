@@ -15,7 +15,7 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 
 	$access_token = $access_token ?? radioking_get_token();
 	$api_headers = [ "authorization"=> "Bearer $access_token"];
-	$response = Requests::get("https://www.radioking.com/api/track/tracks/240028/limit/$limit/offset/$offset/order/upload_date/asc?box=$box",$api_headers);
+	$response = Requests::get("https://www.radioking.com/api/track/tracks/240028/limit/$limit/offset/$offset/order/upload_date/desc?box=$box",$api_headers);
 
 	$wp_users = get_users();
 	$wp_users_display_name = [];
@@ -137,6 +137,7 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 			'artist_list' => $artist_list,
 			'artist_literal' => $track->artist,
 			'album' => $wp_album->ID,
+			'album_post_type' => $album_post_type,
 			'album_literal' => $track->album,
 		];
 		if(!$wp_track){
@@ -151,10 +152,9 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 				//'meta_input' => $wp_track_meta
 			]);
 			$wp_track = get_post($wp_track_id);
-			foreach ($wp_track_meta as $field_key => $field_value){
-				update_field($field_key, $field_value, $wp_track->ID);
-			}
-
+		}
+		foreach ($wp_track_meta as $field_key => $field_value){
+			update_field($field_key, $field_value, $wp_track->ID);
 		}
 
 		// on ajoute la track à l'album/podcast

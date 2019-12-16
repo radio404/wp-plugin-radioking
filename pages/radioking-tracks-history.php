@@ -49,7 +49,7 @@ $page_title = __( 'Historique des pistes RadioKing des dernières 24h', 'radio40
 			        $wp_post_thumbnail = get_the_post_thumbnail_url( $line->wp_track_id, [ 100, 100 ] );
 			        $wp_post_author = $wp_post->post_author == 0 ? 'un bel inconnu' : get_the_author_meta('display_name',$wp_post->post_author);
 			        $wp_post_thumbnail_img = $wp_post_thumbnail ?
-                        "<img class='thumbnail' width='25' height='25' src='$wp_post_thumbnail' alt='' />":"";
+                        "<img class='thumbnail' width='25' height='25' src='$wp_post_thumbnail' alt='' loading='lazy' />":"";
 
 			        if($wp_album_id){
 				        $wp_album = get_post($wp_album_id);
