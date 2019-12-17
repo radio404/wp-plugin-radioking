@@ -32,13 +32,20 @@ function radioking_get_track_box($access_token=null){
 	return json_decode($response->body)->data;
 }
 
-function radioking_get_week_planned($access_token=null){
+function radioking_sync_week_planned($access_token=null){
 	$access_token = $access_token ?? radioking_get_token();
 	$api_headers = [ "authorization"=> "Bearer $access_token"];
-	$response = Requests::get("https://www.radioking.com/api/radio/240028/schedule/planned/2019-12-07/to/2019-12-17",$api_headers);
+	$day = date('w');
+	$week_start = date('Y-m-d', strtotime('-'.($day).' days'));
+	$week_end = date('Y-m-d', strtotime('+'.(7-$day).' days'));
+	$response = Requests::get("https://www.radioking.com/api/radio/240028/schedule/planned/$week_start/to/$week_end",$api_headers);
 	$radioking_schedules = json_decode($response->body)->data;
 	foreach ($radioking_schedules as &$schedule){
-		if(preg_match('/^Day #\d/',$schedule->name)) continue;
+		$schedule->day_playlist = !!preg_match('/^Day #\d/',$schedule->name);
+		if($schedule->day_playlist){
+			continue;
+		}
+
 		if($schedule->idplaylist){
 			$response = Requests::get("https://www.radioking.com/api/playlist/tracks/240028/$schedule->idplaylist?limit=50&offset=0",$api_headers);
 			$schedule->playlist = json_decode($response->body)->data;

@@ -21,5 +21,6 @@ require 'inc/radioking-like.php';
 require 'inc/radioking-log.php';
 
 require 'api/radioking-tracks-import.php';
+require 'api/radioking-schedules-import.php';
 require 'api/radioking-like.php';
 require 'api/radioking-log.php';
