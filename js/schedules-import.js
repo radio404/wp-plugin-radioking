@@ -27,7 +27,7 @@ jQuery(document).ready(function($){
                 schedule_duration_time_percent = schedule_end_time_percent - schedule_start_time_percent,
                 top = (schedule_start_time_percent*100).toFixed(2)+'%',
                 height = (schedule_duration_time_percent*100).toFixed(2)+'%';
-            var scheduleHtml = '<div class="planning__schedule" style="top:'+top+';height:'+height+'">'+schedule.name+'</div>';
+            var scheduleHtml = '<div title="'+schedule.name+'" class="planning__schedule" style="top:'+top+';height:'+height+'">'+schedule.name+'</div>';
             $('.planning__day.day-'+schedule_start_day).append(scheduleHtml);
             console.log(schedule.name, schedule_start_time_percent, schedule_end_time_percent, schedule);
         })

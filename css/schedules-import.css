@@ -12,9 +12,23 @@
     display: flex;
     min-width:1200px;
 }
+.planning--day-name{
+    height:20px;
+}
+.planning__container--day-name{
+    display: flex;
+    min-width:1200px;
+}
 .planning__day{
     width: 14.2857%;
     height:900px;
+    border:1px #000 solid;
+    border-left-width:0;
+    position: relative;
+}
+.planning__day-name{
+    height:20px;
+    text-align: center;
     border:1px #000 solid;
     border-left-width:0;
     position: relative;
@@ -25,7 +39,23 @@
 .planning__day:nth-child(2n){
     background: rgba(255,255,255,.5);
 }
-
+.planning__hour{
+    position: absolute;
+    border-bottom:dashed 1px #000;
+    width:100%;
+}
+.planning__hour:nth-child(2n+1){
+    border-bottom-color: #888;
+}
+.planning__hour--12{
+    border-bottom-color: #f33;
+}
+.planning__hour--6{
+    border-bottom-color: #33f;
+}
+.planning__hour--20{
+    border-bottom-color: #33f;
+}
 .planning__schedule{
     position: absolute;
     background: #999;

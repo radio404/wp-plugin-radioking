@@ -11,6 +11,7 @@ try {
     $count = 0;
 }
 
+setlocale(LC_ALL,'fr');
 
 //*/
 ?><div class="wrap">
@@ -30,11 +31,26 @@ try {
 
     <progress class="import-progress" min="0" max="<?= $count ?>" value="0"></progress>
 
+    <div class="planning planning--day-name">
+        <div class="planning__container planning__container--day-name">
+		    <?php for($i=0; $i<7; $i++){
+			    $d = ($i+1)-7;
+			    $dayName = $dow_text = date('D', strtotime("Sunday +{$d} days"));;
+			    $dayDate = $dow_text = date('d/m', strtotime("Sunday +{$d} days"));;
+			    echo "<div class='planning__day planning__day-name'>$dayName $dayDate</div>";
+		    } ?>
+        </div>
+    </div>
     <div class="planning">
         <div class="planning__container">
         <?php for($i=0; $i<7; $i++){
             $d = ($i+1)%7;
-            echo "<div class='planning__day day-$d' data-day='$d'></div>";
+	        $hours = '';
+            for($h=1;$h<24;$h++){
+                $top = 100*$h/24;
+	            $hours .= "<div class='planning__hour planning__hour--$h' style='top:$top%'></div>";
+            }
+            echo "<div class='planning__day day-$d' data-day='$d'>$hours</div>";
         } ?>
         </div>
     </div>
