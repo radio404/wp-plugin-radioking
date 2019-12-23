@@ -19,7 +19,11 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 
 	$wp_users = get_users();
 	$wp_users_display_name = [];
+	$default_user_id = 0;
 	foreach ($wp_users as $user){
+		if($user->data->display_name === 'robot404'){
+			$default_user_id = $user->ID;
+		}
 		$wp_users_display_name[strtolower($user->data->display_name)] = $user->ID;
 	}
 
@@ -60,11 +64,11 @@ function radioking_tracks_import($offset=0,$limit=1,$box=1,$access_token=null){
 		}
 
 
-		$id_author = 0;
+		$id_author = $default_user_id;
 		$upload_date = new DateTime($track->upload_date);
 		$post_date = $upload_date->format("Y-m-d H:i:s");
 
-		if(intval($wp_track->post_author) <= 1) {
+		if(!! $wp_track || (intval($wp_track->post_author) <= 0)) {
 			// détails des tags
 			$response      = Requests::get( "https://www.radioking.com/api/track/240028/$track->idtrack", $api_headers );
 			$track_details = json_decode( $response->body )->data;
