@@ -104,17 +104,21 @@ function radioking_sync_week_planned($access_token=null, $mode='fetch'){
 
 		$schedule->wp_schedule_meta = $wp_schedule_meta;
 
+		$wp_schedule_attr = [
+			'post_title' => $schedule->name,
+			'post_type' => 'schedule',
+			'post_status' => 'publish',
+			'post_name' => sanitize_title("$schedule->name"),
+			'post_date' => $schedule_start,
+			'post_date_gmt' => $schedule_start,
+		];
+
 		if(!$wp_schedule){
-			$wp_schedule_id = wp_insert_post([
-				'post_title' => $schedule->name,
-				'post_type' => 'schedule',
-				'post_status' => 'publish',
-				'post_name' => sanitize_title("$schedule->name"),
-				'post_date' => $schedule_start,
-				'post_date_gmt' => $schedule_start,
-				//'meta_input' => $wp_track_meta
-			]);
+			$wp_schedule_id = wp_insert_post($wp_schedule_attr);
 			$wp_schedule = get_post($wp_schedule_id);
+		}else{
+			$wp_schedule_attr['ID'] = $wp_schedule->ID;
+			$wp_schedule_id = wp_update_post($wp_schedule_attr);
 		}
 		foreach ($wp_schedule_meta as $field_key => $field_value){
 			update_field($field_key, $field_value, $wp_schedule->ID);
