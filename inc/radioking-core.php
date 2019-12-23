@@ -2,10 +2,9 @@
 
 function radioking_get_token(){
 
-	$user_id = get_current_user_id();
-	$api_oauth_endpoint = get_field('radioking_api_manager_endpoint','option');
-	$rk_user_id = get_field("radioking_user_id","user_$user_id");
-	$rk_password = get_field("radioking_password","user_$user_id");
+	$api_oauth_endpoint = get_field('radioking_api_manager_endpoint','options');
+	$rk_user_id = get_field("radioking_user_id","options");
+	$rk_password = get_field("radioking_password","options");
 	$response = Requests::post($api_oauth_endpoint, [], json_encode( [
 		'login'    => $rk_user_id,
 		'password' => $rk_password,
