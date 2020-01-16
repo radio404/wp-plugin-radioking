@@ -14,7 +14,9 @@ function radioking_log_api_callback($request_data) {
 	try {
 		$payload       = json_decode( $request_data->get_body() );
 		if ( $payload ) {
-			if ( $payload->id ) {
+			if( !defined('WP_RK_LOG_TRACK_PASSPHRASE') || $payload->passphrase !== WP_RK_LOG_TRACK_PASSPHRASE){
+				$success['error'] = 'Invalid passphrase.';
+			} else if ( $payload->id) {
 				$success = radioking_log_track($payload);
 			}
 		}
