@@ -24,10 +24,13 @@ function radioking_create_db() {
 `id_track_log` INT NOT NULL AUTO_INCREMENT, 
 `rk_track_id` INT NOT NULL , 
 `wp_track_id` INT NOT NULL , 
-`started_at` DATETIME NOT NULL
-`ended_at` DATETIME NOT NULL
+`title` TEXT NOT NULL , 
+`album` TEXT NOT NULL , 
+`artist` TEXT NOT NULL , 
+`started_at` DATETIME NOT NULL ,
+`end_at` DATETIME NOT NULL ,
 `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-PRIMARY KEY (`wp_track_log_id`)) ENGINE = InnoDB;
+PRIMARY KEY (`id_track_log`)
  );";
 
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
